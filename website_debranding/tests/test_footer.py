@@ -6,8 +6,10 @@ from odoo.tests import HttpCase, tagged
 class TestFooter(HttpCase):
     def test_promotion_message_removed(self):
         view = self.env.ref("website_debranding.layout_footer_copyright")
-        # post_init_hook disables the view while testing
-        self.assertFalse(view.active)
+        # post_init_hook only disables the view when the module is installed in
+        # test mode; set the starting state explicitly so the test also holds
+        # when the module was installed first and tested on update.
+        view.active = False
         html = self.url_open("/").text
         self.assertIn("Powered by", html)
         view.active = True
